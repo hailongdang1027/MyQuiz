@@ -35,7 +35,6 @@ public class QuizActivity extends AppCompatActivity {
     private TextView textScore;
     private TextView textQuestionCount;
     private TextView textDifficult;
-    private TextView textName;
     private TextView textSubject;
 
     private TextView textCountDown;
@@ -73,7 +72,6 @@ public class QuizActivity extends AppCompatActivity {
         textCountDown = findViewById(R.id.text_countdown);
         textQuestionCount = findViewById(R.id.text_question_count);
         textDifficult = findViewById(R.id.text_difficult);
-        textName = findViewById(R.id.text_name);
         textSubject = findViewById(R.id.text_subject);
 
         radioGroup = findViewById(R.id.radio_group);
@@ -90,11 +88,9 @@ public class QuizActivity extends AppCompatActivity {
         int idConnect = intent.getIntExtra(MainActivity.EXTRA_CONNECT_ID, 0);
         String nameSubject = intent.getStringExtra(MainActivity.EXTRA_SUBJECT);
         String difficult = intent.getStringExtra(MainActivity.EXTRA_DIFFICULT);
-        String person = intent.getStringExtra(MainActivity.NAME_PERSON);
         textSubject.setText("Subject: " + nameSubject);
 
         textDifficult.setText("Level: " + difficult);
-        textName.setText("Name: " + person);
 
         if (savedInstanceState == null){
             DatabaseQuiz databaseQuiz = DatabaseQuiz.getInstance(this);

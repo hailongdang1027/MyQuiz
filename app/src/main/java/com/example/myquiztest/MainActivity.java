@@ -1,5 +1,6 @@
 package com.example.myquiztest;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -36,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_SUBJECT = "extraSubject";
     public static final String KEY_HIGHSCORE = "keyHighscore";
     public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String NAME_PERSON = "namePerson";
     private static final String NOTIFICATION_CHANNEL_ID = "1";
 
 
@@ -46,12 +54,15 @@ public class MainActivity extends AppCompatActivity {
 
     private int highscore;
 
-    private EditText namePerson;
-    private EditText idPerson;
+    private FirebaseUser user;
+    private DatabaseReference databaseReference;
 
+    private String userID;
 
     Button buttonNotification;
     Button buttonConnectCamera;
+
+    Button buttonLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
         textHighScore = findViewById(R.id.text_highscore);
         spinnerDifficult = findViewById(R.id.spinner_difficult);
         spinnerSubject = findViewById(R.id.spinner_subject);
-        namePerson = findViewById(R.id.text_edit_name);
-        idPerson = findViewById(R.id.text_edit_id);
+
 
         buttonNotification = findViewById(R.id.button_notification);
         buttonConnectCamera = findViewById(R.id.button_connect_camera);
+        buttonLogout = findViewById(R.id.button_logout);
 
         int permissionStatus = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS);
@@ -87,6 +98,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
+
 
         loadSubjects();
         loadDifficultLevels();
@@ -102,7 +121,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        userID = user.getUid();
 
+        final TextView textViewName = findViewById(R.id.text_view_name_person);
+        databaseReference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User userProfile = snapshot.getValue(User.class);
+                if (userProfile != null){
+                    String fullNamePerson = userProfile.fullName;
+
+                    textViewName.setText(fullNamePerson);
+                    
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "Something wrong happened", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showNotification(){
@@ -146,30 +186,13 @@ public class MainActivity extends AppCompatActivity {
         SubjectActivity selectedSubject = (SubjectActivity) spinnerSubject.getSelectedItem();
         int idConnect = selectedSubject.getId();
         String nameSubject = selectedSubject.getNameSubject();
-        String nameEdit;
-        String idEdit;
-        nameEdit = namePerson.getText().toString();
-        idEdit = idPerson.getText().toString();
 
 
-
-        if (TextUtils.isEmpty(nameEdit)){
-            Toast.makeText(this, "Please enter name", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (TextUtils.isEmpty(idEdit)){
-            Toast.makeText(this, "Please enter id", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String person = namePerson.getText().toString();
         String difficult = spinnerDifficult.getSelectedItem().toString();
         Intent intent = new Intent(MainActivity.this, QuizActivity.class);
         intent.putExtra(EXTRA_CONNECT_ID, idConnect);
         intent.putExtra(EXTRA_SUBJECT, nameSubject);
         intent.putExtra(EXTRA_DIFFICULT, difficult);
-        intent.putExtra(NAME_PERSON, person);
         startActivityForResult(intent, REQUEST_CODE_QUIZ);
     }
 

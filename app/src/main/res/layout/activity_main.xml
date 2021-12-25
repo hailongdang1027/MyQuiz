@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="60dp"
         android:text="Test quiz"
         android:textColor="@android:color/black"
         android:textSize="35sp" />
@@ -27,6 +27,17 @@
         android:layout_marginBottom="35dp"
         android:text="Highscore: 0"
         android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/text_view_name_person"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/text_highscore"
+        android:text="Name:"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:textSize="25sp"
+        />
 
     <Button
         android:id="@+id/button_start"
@@ -52,23 +63,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="6dp" />
 
-    <EditText
-        android:id="@+id/text_edit_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:hint="Name"
-        />
 
-    <EditText
-        android:id="@+id/text_edit_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/text_edit_name"
-        android:hint="ID"
-        />
 
 
     <Button
@@ -83,10 +78,18 @@
         android:id="@+id/button_connect_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Camera"
         android:layout_below="@id/button_notification"
         android:layout_centerHorizontal="true"
-        />
+        android:text="Camera" />
+
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_connect_camera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Logout" />
 
 
 </RelativeLayout>
